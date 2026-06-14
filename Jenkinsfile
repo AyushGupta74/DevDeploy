@@ -14,6 +14,16 @@ pipeline {
 
     stages {
 
+        stage('Debug Environment') {
+            steps {
+                sh '''
+                    echo "PATH=$PATH"
+                    which python3
+                    python3 --version
+                '''
+            }
+        }
+
         stage('Setup Virtual Environment') {
 
             steps {

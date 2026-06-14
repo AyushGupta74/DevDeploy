@@ -4,23 +4,29 @@ pipeline {
 
     stages {
 
-        stage('Build') {
+        stage('Checkout Info') {
 
             steps {
 
-                sh 'echo "Building " '
+                echo 'Current Workspace:'
+
+                sh 'pwd'
+
+                echo 'Repository Files:'
+
+                sh 'ls -la'
 
             }
 
         }
 
-        stage('Test') {
+    }
 
-            steps {
+    post {
 
-                sh 'echo "Testing " '
+        always {
 
-            }
+            echo 'Pipeline Completed'
 
         }
 

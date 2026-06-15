@@ -16,7 +16,7 @@ pipeline {
         FULL_IMAGE_PATH      = "${DOCKER_REGISTRY_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
         CONTAINER_NAME       = "devdeploy1"
 
-        PYENV_ROOT           = '/Users/your_mac_username/.pyenv'
+        PYENV_ROOT           = '/var/jenkins_home/.pyenv'
         PATH                 = "${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:/usr/local/bin:${env.PATH}"
     }
 

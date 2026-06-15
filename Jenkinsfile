@@ -33,7 +33,8 @@ pipeline {
                 // Optional: Verifies your Python code works on 3.11.0 before making a container
                 sh """
                     python3 --version
-                    pip install -r requirements.txt
+                    python3 -m pip install --upgrade pip
+                    python3 -m pip install -r requirements.txt
                     pytest
                 """
             }

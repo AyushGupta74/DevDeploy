@@ -31,9 +31,11 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 // Optional: Verifies your Python code works on 3.11.0 before making a container
-                sh "python --version"
-                sh "pip install -r requirements.txt"
-                sh "pytest" // Uncomment this if you use testing tools
+                sh """
+                    python3 --version
+                    pip install -r requirements.txt
+                    pytest
+                """
             }
         }
 

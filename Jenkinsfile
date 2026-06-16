@@ -16,8 +16,8 @@ pipeline {
         FULL_IMAGE_PATH      = "${DOCKER_REGISTRY_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
         CONTAINER_NAME       = "devdeploy1"
 
-        PYENV_ROOT           = "/var/jenkins_home/.pyenv/versions/3.11.0"
-        PATH                 = "${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:/usr/local/bin:${env.PATH}"
+        PYENV_ROOT = "/var/jenkins_home/.pyenv"
+        PATH = "${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${env.PATH}"
     }
 
     stages {
@@ -33,22 +33,34 @@ pipeline {
                 // Optional: Verifies your Python code works on 3.11.0 before making a container
                 sh """
                     python3 --version
-                    python3 -m pip install --upgrade pip
-                    python3 -m pip install -r requirements.txt
-                    python3 -m pytest --version
+                    python3 -m venv .venv
+                    . .venv/bin/activate
+                    python -m pip install --upgrade pip
+                    python -m pip install -r requirements.txt
+                    python -m pytest --version
                 """
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:latest ."
+                sh "docker build -t ${IMAGE_NAME}:latest -t ${FULL_IMAGE_PATH} ."
             }
         }
 
         stage('Verify Docker Image') {
             steps {
                 sh "docker image inspect ${IMAGE_NAME}:latest"
+                sh "docker image inspect ${FULL_IMAGE_PATH}"
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
+                    sh "echo $DOCKERHUB_PASS | docker login --username $DOCKERHUB_USER --password-stdin"
+                    sh "docker push ${FULL_IMAGE_PATH}"
+                }
             }
         }
 
